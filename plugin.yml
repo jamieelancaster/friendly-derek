@@ -1,0 +1,4 @@
+name: FriendlyDerek
+version: '1.0-SNAPSHOT'
+main: org.example.mcplugintutorial.friendlyderek.FriendlyDerek
+api-version: '1.20'
