@@ -1,0 +1,52 @@
+package org.example.mcplugintutorial.friendlyderek.handlers;
+
+import org.bukkit.Bukkit;
+import org.bukkit.entity.Ageable;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.entity.EntityPotionEffectEvent;
+import org.bukkit.event.entity.EntityTargetLivingEntityEvent;
+import org.bukkit.plugin.Plugin;
+import org.bukkit.potion.PotionEffect;
+import org.example.mcplugintutorial.friendlyderek.FriendlyDerek;
+
+public class ZoglinHandler implements Listener {
+  public ZoglinHandler(FriendlyDerek plugin) {
+    Bukkit.getPluginManager().registerEvents(this, (Plugin)plugin);
+  }
+  
+  @EventHandler
+  public void ZoglinConvert(EntityPotionEffectEvent event) {
+    Entity entity = event.getEntity();
+    if (entity.getType() == EntityType.ZOGLIN && entity.getName().equals("Derek")) {
+      PotionEffect effect = event.getNewEffect();
+      assert effect != null;
+      if (effect.getType().getName().equals("WEAKNESS")) {
+        Ageable castedEntity = (Ageable)entity;
+        int entityAge = castedEntity.getAge();
+        double entityHealth = castedEntity.getHealth();
+        Bukkit.getLogger().info("Zoglin transformation");
+        Entity derek = entity.getWorld().spawnEntity(entity.getLocation(), EntityType.HOGLIN);
+        derek.setCustomName("Derek");
+        Ageable castedDerek = (Ageable)derek;
+        if (entityAge == -1) {
+          castedDerek.setBaby();
+        } else {
+          castedDerek.setAdult();
+        } 
+        castedDerek.setHealth(entityHealth);
+        castedDerek.setRemoveWhenFarAway(false);
+        entity.remove();
+      } 
+    } 
+  }
+  
+  @EventHandler
+  public void onEntityTarget(EntityTargetLivingEntityEvent event) {
+    Entity entity = event.getEntity();
+    if (event.getTarget() != null && entity.getType().equals(EntityType.HOGLIN) && entity.getName().equals("Derek"))
+      event.setCancelled(true); 
+  }
+}
